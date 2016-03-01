@@ -1,25 +1,26 @@
 package com.zju.yibao;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import java.util.Calendar;
+import com.alibaba.fastjson.JSON;
+import com.zju.yibao.Interface.GetJson;
+import com.zju.yibao.Util.MyJsonLoader;
+import com.zju.yibao.bean.MyInformation;
 
 /**
  * Created by hmw on 2016/2/2.
  */
-public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChangeListener, View.OnClickListener {
+public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChangeListener, View.OnClickListener, GetJson {
     private Toolbar toolbar;
     private TextView title;
     private EditText sex;
@@ -29,12 +30,15 @@ public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChang
     private int choice = 0;
     boolean[] selected = new boolean[]{false, false, false, false, false, false};
 
+    private String string_http = "http://115.28.194.35:8080/ArtEducation/student/queryStuInfo.action?studentId=1";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myinformation);
 
         initView();
+        loadData();
     }
 
     @Override
@@ -57,7 +61,7 @@ public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChang
                 break;
             case R.id.edit_userinfo_age:
                 if (hasFocus) {
-                    chooseDate();
+                    chooseAge();
                 }
                 break;
             case R.id.edit_userinfo_preference:
@@ -75,7 +79,7 @@ public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChang
                 chooseSex();
                 break;
             case R.id.edit_userinfo_age:
-                chooseDate();
+                chooseAge();
                 break;
             case R.id.edit_userinfo_preference:
                 choosePreference();
@@ -83,6 +87,15 @@ public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChang
             case R.id.btn_update_userinfo:
                 break;
         }
+    }
+
+    @Override
+    public void getJson(String s) {
+        System.out.println(s);
+        MyInformation myInformation = JSON.parseObject(s, MyInformation.class);
+        sex.setText(myInformation.getGender());
+        age.setText(myInformation.getStudentAge()+"");
+        preference.setText(myInformation.getPreference());
     }
 
     private void initView() {
@@ -112,6 +125,10 @@ public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChang
         update.setOnClickListener(this);
     }
 
+    private void loadData() {
+        new MyJsonLoader(this).loadJson(string_http);
+    }
+
     public void chooseSex() {
         final String[] sexList = {"男", "女"};
         new AlertDialog.Builder(MYINFOMATION.this)
@@ -135,22 +152,25 @@ public class MYINFOMATION extends AppCompatActivity implements View.OnFocusChang
                 .show();
     }
 
-    public void chooseDate() {
-        Calendar calendar = Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                //Calendar月份是从0开始,所以month要加1
-                age.setText("" + year + "年" + (month + 1) + "月" + dayOfMonth + "日");
-            }
-        };
-        Dialog dialog = new DatePickerDialog(
-                this,
-                dateListener,
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
+    private void chooseAge() {
+        final NumberPicker numberPicker = new NumberPicker(this);
+        numberPicker.setMinValue(10);
+        numberPicker.setMaxValue(80);
+        numberPicker.setValue(16);
+
+        AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this)
+                .setTitle("请选择您的年龄")
+                .setView(numberPicker)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        age.setText(numberPicker.getValue() + "");
+                    }
+                })
+                .setNegativeButton("取消", null);
+        builder.create()
+                .show();
+
     }
 
     public void choosePreference() {

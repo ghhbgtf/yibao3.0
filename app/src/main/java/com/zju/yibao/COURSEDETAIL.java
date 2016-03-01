@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.zju.yibao.Util.MySimpleAdapter;
 import com.zju.yibao.bean.Course;
 
 import java.util.ArrayList;

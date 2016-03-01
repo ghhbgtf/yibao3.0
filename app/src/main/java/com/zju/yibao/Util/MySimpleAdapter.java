@@ -1,4 +1,4 @@
-package com.zju.yibao;
+package com.zju.yibao.Util;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.zju.yibao.R;
 
 import java.util.List;
 import java.util.Map;

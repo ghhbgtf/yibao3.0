@@ -1,4 +1,4 @@
-package com.zju.yibao;
+package com.zju.yibao.Util;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.zju.yibao.R;
 import com.zju.yibao.bean.MyOrders;
 
 import java.util.ArrayList;
